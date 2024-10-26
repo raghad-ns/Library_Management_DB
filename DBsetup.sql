@@ -8,7 +8,7 @@ CREATE TABLE [Borrowers] (
   [LastName] varchar(50),
   [Email] varchar(30),
   [DateOfBirth] Date,
-  [MembershipData] varchar(50),
+  [MembershipDate] varchar(50),
   PRIMARY KEY ([BorrowerID])
 );
 

@@ -62,7 +62,7 @@ BEGIN
     DECLARE @DateBorrowed DATE = DATEADD(DAY, -FLOOR(RAND() * 365), GETDATE());  -- Random date within the past year
     DECLARE @DueDate DATE = DATEADD(DAY, 14, @DateBorrowed);  -- 2 weeks after DateBorrowed
     DECLARE @DateReturned DATE = CASE 
-                                   WHEN RAND() < 0.7 THEN DATEADD(DAY, FLOOR(RAND() * 14), @DueDate) 
+                                   WHEN RAND() < 0.7 AND @counter < 900 THEN DATEADD(DAY, FLOOR(RAND() * 14), @DueDate) 
                                    ELSE NULL 
                                  END;  -- 70% chance of a return date within 2 weeks after DueDate
 
