@@ -3,17 +3,16 @@ CREATE DATABASE LibraryManagement;
 Use LibraryManagement
 
 CREATE TABLE [Borrowers] (
-  [BorrowerID] int,
+  [BorrowerID] int IDENTITY PRIMARY KEY,
   [FirstName] varchar(50),
   [LastName] varchar(50),
   [Email] varchar(30),
   [DateOfBirth] Date,
-  [MembershipDate] varchar(50),
-  PRIMARY KEY ([BorrowerID])
+  [MembershipDate] Date,
 );
 
 CREATE TABLE [Books] (
-  [BookID] int,
+  [BookID] int IDENTITY PRIMARY KEY,
   [Title] varchar(50),
   [Author] varchar(50),
   [ISBN] varchar(13),
@@ -21,17 +20,15 @@ CREATE TABLE [Books] (
   [ShelfLocation] varchar(30),
   [CurrentStatus] varchar(10) 
   CHECK (CurrentStatus IN ('available', 'borrowed')),
-  PRIMARY KEY ([BookID])
 );
 
 CREATE TABLE [Loans] (
-  [LoanID] int,
+  [LoanID] int IDENTITY PRIMARY KEY,
   [BookID] int,
   [BorrowerID] int,
   [DateBorrowed] Date,
   [DueDate] Date,
   [DateReturned] Date,
-  PRIMARY KEY ([LoanID]),
   CONSTRAINT [FK_Borrowers.BorrowerID]
     FOREIGN KEY ([BorrowerID])
       REFERENCES [Borrowers]([BorrowerID]),

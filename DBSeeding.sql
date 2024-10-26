@@ -8,9 +8,8 @@ DECLARE @counter INT = 1;
 
 WHILE @counter <= 1000
 BEGIN
-    INSERT INTO Books (BookID, Title, Author, ISBN, Genere, ShelfLocation, CurrentStatus)
+    INSERT INTO Books (Title, Author, ISBN, Genere, ShelfLocation, CurrentStatus)
     VALUES (
-        @counter,
         CONCAT('Title ', @counter),
         CONCAT('Author ', @counter),
         RIGHT('0000000000000' + CAST(@counter AS VARCHAR(13)), 13),  -- Generates unique ISBNs
@@ -33,14 +32,13 @@ DECLARE @counter INT = 1;
 
 WHILE @counter <= 1000
 BEGIN
-    INSERT INTO Borrowers (BorrowerID, FirstName, LastName, Email, DateOfBirth, MembershipData)
+    INSERT INTO Borrowers (FirstName, LastName, Email, DateOfBirth, MembershipDate)
     VALUES (
-        @counter,
         CONCAT('FirstName', @counter),
         CONCAT('LastName', @counter),
         CONCAT('user', @counter, '@example.com'),
         DATEADD(DAY, -(@counter * 30 % 365), '2000-01-01'),  -- Distributes dates of birth within a range
-        CONCAT('Membership-', RIGHT('000' + CAST(@counter AS VARCHAR(4)), 4))
+        DATEADD(DAY, -(@counter * 30 % 365), '2024-01-01')
     );
 
     SET @counter = @counter + 1;
@@ -66,9 +64,8 @@ BEGIN
                                    ELSE NULL 
                                  END;  -- 70% chance of a return date within 2 weeks after DueDate
 
-    INSERT INTO Loans (LoanID, BookID, BorrowerID, DateBorrowed, [DueDate], DateReturned)
+    INSERT INTO Loans (BookID, BorrowerID, DateBorrowed, [DueDate], DateReturned)
     VALUES (
-        @counter,
         @BookID,
         @BorrowerID,
         @DateBorrowed,
