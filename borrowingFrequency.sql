@@ -1,10 +1,10 @@
-with BorrowersFrequencies 
-as (
-select BorrowerID, 
-count(LoanID) over (partition by Loans.BorrowerID) as BorrowingFrequency
-from Loans)
+WITH BorrowersFrequencies AS (
+    SELECT BorrowerID, 
+        COUNT(LoanID) OVER (PARTITION BY Loans.BorrowerID) AS BorrowingFrequency
+        FROM Loans
+)
 
-select distinct Borrowers.BorrowerID, FirstName, LastName, BorrowingFrequency, 
-DENSE_RANK() over (order by BorrowingFrequency desc) as BorrowerRank
-from Borrowers left join BorrowersFrequencies as Frequencies on Borrowers.BorrowerID = Frequencies.BorrowerID
-order by BorrowerRank 
+SELECT DISTINCT Borrowers.BorrowerID, FirstName, LastName, BorrowingFrequency, 
+DENSE_RANK() OVER (ORDER BY BorrowingFrequency DESC) AS BorrowerRank
+FROM Borrowers LEFT JOIN BorrowersFrequencies AS Frequencies ON Borrowers.BorrowerID = Frequencies.BorrowerID
+ORDER BY BorrowerRank 

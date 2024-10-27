@@ -1,3 +1,3 @@
 
-select Books.BookID, Title, Author from Books join Loans on Books.BookID = Loans.BookID
+SELECT Books.BookID, Title, Author FROM Books JOIN Loans ON Books.BookID = Loans.BookID
 GO

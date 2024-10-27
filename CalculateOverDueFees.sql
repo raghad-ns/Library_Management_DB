@@ -1,26 +1,26 @@
-create function fn_CalculateOverdueFees (@LoanID int)
-returns int as
-begin
-	declare @fees int
-	declare @dueDate Date = (select DueDate from Loans where LoanID = @LoanID)
-	declare @returnedDate Date = (select DateReturned from Loans where LoanID = @LoanID)
-	declare @now Date = (SELECT CURRENT_TIMESTAMP)
-	if (@returnedDate is null) 
-		if (@dueDate >= @now) set @fees = 0
-		else 
-		begin
-			declare @overdue int = DATEDIFF(DAY, @dueDate, @now)
-			if (@overdue > 30) set @fees = 30 + 2 * (@overdue - 30)
-			else set @fees = @overdue 
-		end
-	else
-	begin
-		declare @overdueForReturnedBook int = DATEDIFF(DAY, @dueDate, @returnedDate)
-		if (@overdueForReturnedBook > 30) set @fees = 30 + 2 * (@overdueForReturnedBook - 30)
-		else set @fees = @overdueForReturnedBook 
-	end
-	return @fees
-end
+CREATE FUNCTION fn_CalculateOverdueFees (@LoanID INT)
+RETURNS INT AS
+BEGIN
+	DECLARE @fees INT
+	DECLARE @dueDate DATE = (SELECT DueDate FROM Loans WHERE LoanID = @LoanID)
+	DECLARE @returnedDate DATE = (SELECT DateReturned FROM Loans WHERE LoanID = @LoanID)
+	DECLARE @now DATE = (SELECT CURRENT_TIMESTAMP)
+	IF (@returnedDate IS NULL) 
+		IF (@dueDate >= @now) SET @fees = 0
+		ELSE 
+		BEGIN
+			DECLARE @overdue INT = DATEDIFF(DAY, @dueDate, @now)
+			IF (@overdue > 30) SET @fees = 30 + 2 * (@overdue - 30)
+			ELSE SET @fees = @overdue 
+		END
+	ELSE
+	BEGIN
+		DECLARE @overdueForReturnedBook INT = DATEDIFF(DAY, @dueDate, @returnedDate)
+		IF (@overdueForReturnedBook > 30) SET @fees = 30 + 2 * (@overdueForReturnedBook - 30)
+		ELSE SET @fees = @overdueForReturnedBook 
+	END
+	RETURN @fees
+END
 
 
-select LoanID, dbo.fn_CalculateOverdueFees(1) as OverDue from Loans
+SELECT LoanID, dbo.fn_CalculateOverdueFees(1) AS OverDue FROM Loans

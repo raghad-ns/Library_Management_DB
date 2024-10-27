@@ -1,11 +1,11 @@
-create function fn_BookBorrowingFrequency(@bookId int)
-returns int 
-as
-begin
-	declare @frequency int;
-	select @frequency = count(LoanID) from Loans where BookID = @bookId ;
+CREATE FUNCTION fn_BookBorrowingFrequency(@bookId INT)
+RETURNS INT 
+AS
+BEGIN
+	declare @frequency INT;
+	SELECT @frequency = COUNT(LoanID) FROM Loans WHERE BookID = @bookId ;
 
 	return @frequency;
-end
+END
 
-select dbo.fn_BookBorrowingFrequency(5) as BorrowingFrequency
+SELECT dbo.fn_BookBorrowingFrequency(5) AS BorrowingFrequency

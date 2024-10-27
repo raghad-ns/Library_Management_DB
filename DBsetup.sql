@@ -1,6 +1,6 @@
 CREATE DATABASE LibraryManagement;
 
-Use LibraryManagement
+USE LibraryManagement
 
 CREATE TABLE [Borrowers] (
   [BorrowerID] int IDENTITY PRIMARY KEY,

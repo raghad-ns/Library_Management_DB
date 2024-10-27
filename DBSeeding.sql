@@ -1,9 +1,9 @@
-Use LibraryManagement;
+USE LibraryManagement;
 
 -- Seed books table
-create procedure p_seed_books
-as
-begin
+CREATE PROCEDURE p_seed_books
+AS
+BEGIN
 DECLARE @counter INT = 1;
 
 WHILE @counter <= 1000
@@ -20,14 +20,14 @@ BEGIN
 
     SET @counter = @counter + 1;
 END;
-end
+END
 
 EXEC p_seed_books;
 GO
 
 -- Seed borrowers table
-create procedure p_seed_borrowers
-as begin
+CREATE PROCEDURE p_seed_borrowers
+AS BEGIN
 DECLARE @counter INT = 1;
 
 WHILE @counter <= 1000
@@ -43,14 +43,14 @@ BEGIN
 
     SET @counter = @counter + 1;
 END;
-end
+END
 
-exec p_seed_borrowers
+EXEC p_seed_borrowers
 GO
 
 -- Seed loans table
-create procedure p_seed_loans
-as begin 
+CREATE PROCEDURE p_seed_loans
+AS BEGIN 
 DECLARE @counter INT = 1;
 
 WHILE @counter <= 1000
@@ -75,7 +75,7 @@ BEGIN
 
     SET @counter = @counter + 1;
 END;
-end
+END
 
-exec p_seed_loans
+EXEC p_seed_loans
 GO

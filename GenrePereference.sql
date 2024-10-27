@@ -1,34 +1,40 @@
-create function fn_getAgeGroup (@DOB Date) 
-returns int
-begin
-	DECLARE @now Date = (SELECT CURRENT_TIMESTAMP)
-	DECLARE @age int = DATEDIFF(YEAR, @DOB, @now)
-	return @age / 10
+CREATE FUNCTION fn_getAgeGroup (@DOB DATE) 
+RETURNS INT
+BEGIN
+	DECLARE @now DATE = (SELECT CURRENT_TIMESTAMP)
+	DECLARE @age INT = DATEDIFF(YEAR, @DOB, @now)
+	RETURN @age / 10
 
-end
+END
 
 
-with BooksLoansCountCTE as 
+WITH BooksLoansCountCTE AS 
 (
-	select  BookID , Count(LoanID) over (partition by BookID) as BookLoansCount 
-	from Loans
+	SELECT  BookID , Count(LoanID) OVER (PARTITION BY BookID) AS BookLoansCount 
+	FROM Loans
 )
 
-, BorrowedBooksCTE as (
-select Books.BookID, Genere, Loans.BorrowerID from Loans join Books on Loans.BookID = Books.BookID
+, BorrowedBooksCTE AS (
+	SELECT Books.BookID, Genere, Loans.BorrowerID 
+		FROM Loans JOIN Books 
+		ON Loans.BookID = Books.BookID
 )
 
-, BooksBorrowersCTE as (
-	select BookID, Genere, Borrowers.BorrowerID, DateOfBirth from BorrowedBooksCTE join Borrowers on BorrowedBooksCTE.BorrowerID = Borrowers.BorrowerID
+, BooksBorrowersCTE AS (
+	SELECT BookID, Genere, Borrowers.BorrowerID, DateOfBirth 
+		FROM BorrowedBooksCTE JOIN Borrowers 
+		ON BorrowedBooksCTE.BorrowerID = Borrowers.BorrowerID
 )
 
-, AgeGroupsCTE as (
-	select *, dbo.fn_getAgeGroup(DateOfBirth) as AgeGroup from BooksBorrowersCTE
+, AgeGroupsCTE AS (
+	SELECT *, dbo.fn_getAgeGroup(DateOfBirth) AS AgeGroup FROM BooksBorrowersCTE
 )
-, GenreBorrowingFrequency as (
-select Genere, AgeGroup, COUNT(Genere) over (PARTITION BY AgeGroup) as Frequency from AgeGroupsCTE
+
+, GenreBorrowingFrequency AS (
+	SELECT Genere, AgeGroup, COUNT(Genere) OVER (PARTITION BY AgeGroup) AS Frequency 
+		FROM AgeGroupsCTE
 ) 
 
-select distinct AgeGroup, Genere as PreferedGenre, Frequency as BorrwingFrequency, 
-RANK() over (partition by AgeGroup order by Frequency desc) as GenreRank
-from GenreBorrowingFrequency
+SELECT distinct AgeGroup, Genere AS PreferedGenre, Frequency AS BorrwingFrequency, 
+	RANK() OVER (PARTITION BY AgeGroup order BY Frequency desc) AS GenreRank
+	FROM GenreBorrowingFrequency
