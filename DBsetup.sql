@@ -37,3 +37,7 @@ CREATE TABLE [Loans] (
       REFERENCES [Books]([BookID])
 );
 
+
+-- Creating indeces
+CREATE  INDEX IX_Borrowers_Email ON Borrowers (Email);
+CREATE INDEX IX_ReturnedDate_DueDate ON Loans (DateReturned, DueDate);
