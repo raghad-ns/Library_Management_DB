@@ -1,3 +1,5 @@
+USE LibraryManagement
+GO
 
-SELECT Books.BookID, Title, Author FROM Books JOIN Loans ON Books.BookID = Loans.BookID
+SELECT DISTINCT Books.ID, Title, Author FROM Books JOIN Loans ON Books.ID = Loans.BookID
 GO

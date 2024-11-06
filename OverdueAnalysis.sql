@@ -1,15 +1,13 @@
-CREATE OR ALTER FUNCTION fn_CalculateOverdueDays (@LoanID INT)
+CREATE OR ALTER FUNCTION fn_CalculateoverDueDays (@LoanID INT, @dueDate DATETIME, @returnedDate DATETIME)
 RETURNS INT AS
 BEGIN
 	declare @overDue INT
-	declare @dueDate DATE = (SELECT DueDate FROM Loans WHERE LoanID = @LoanID)
-	declare @returnedDate DATE = (SELECT DateReturned FROM Loans WHERE LoanID = @LoanID)
-	declare @now DATE = (SELECT CURRENT_TIMESTAMP)
+	declare @now DATETIME = SYSDATETIME()
 	IF (@returnedDate IS NULL) 
 		IF (@dueDate >= @now) SET @overDue = 0
 		ELSE 
 		BEGIN
-			SET @overdue = DATEDIFF(DAY, @dueDate, @now)
+			SET @overDue = DATEDIFF(DAY, @dueDate, @now)
 		END
 	ELSE
 	BEGIN
@@ -19,24 +17,26 @@ BEGIN
 END
 GO
 
--- Get loans overdue
+DECLARE @overDueThreshold INT = 30;
+
+-- Get loans overDue
 WITH LoansOverDuesCTE AS (
-	SELECT *, dbo.fn_CalculateOverdueDays(LoanID) AS Overdue FROM Loans
+	SELECT Borrowers.BorrowerID, Books.BookID, LoanID, DueDate, DateReturned, dbo.fn_CalculateOverDueDays(LoanID, DueDate, DateReturned) AS overDue 
+	FROM Loans 
+	JOIN Borrowers ON Loans.BorrowerID = Borrowers.BorrowerID
+	JOIN Books ON Books.BookID = Loans.BookID
+	WHERE dbo.fn_CalculateOverDueDays(LoanID, DueDate, DateReturned) > @overDueThreshold
 )
 
-, BorrowersOverDueCTE AS (
-	SELECT Borrowers.BorrowerID, FirstName, LAStName, BookID, Overdue 
+, BorrowersoverDueCTE AS (
+	SELECT Borrowers.BorrowerID, FirstName, LAStName, BookID, overDue 
 		FROM Borrowers JOIN 
-		(SELECT * FROM LoansOverDuesCTE WHERE Overdue > 30) AS LoansOverdues
-		on Borrowers.BorrowerID = LoansOverdues.BorrowerID
+		(SELECT BorrowerID, BookID, overDue FROM LoansoverDuesCTE ) AS LoansoverDues
+		on Borrowers.BorrowerID = LoansoverDues.BorrowerID
 )
 
-, BooksAndBorrowersOverdueCTE AS (
-	SELECT BorrowerID, FirstName, LastName, Books.BookID, Title, Author, Overdue
-		FROM Books JOIN 
-		(SELECT * FROM BorrowersOverDueCTE) AS BorrowersOverdue
-		on Books.BookID = BorrowersOverdue.BookID
-)
-
-SELECT * FROM BooksAndBorrowersOverdueCTE
+SELECT BorrowerID, FirstName, LastName, Books.BookID, Title, Author, overDue
+	FROM Books JOIN 
+	(SELECT * FROM BorrowersoverDueCTE) AS BorrowersoverDue
+	on Books.BookID = BorrowersoverDue.BookID
 GO

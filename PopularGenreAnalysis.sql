@@ -1,11 +1,11 @@
 
-WITH loansOfMonth AS (
+WITH loansOfMonthCTE AS (
     SELECT *
         FROM Loans
-        WHERE MONTH(DateBorrowed) = 11 AND YEAR(DateBorrowed) = 
+        WHERE MONTH(DateBorrowed) = 11 AND YEAR(DateBorrowed) = 2023
 )
 
--- SELECT Genere from Books join loansOfMonth 
-SELECT DISTINCT Genere
-    FROM Books JOIN loansOfMonth AS monthLoans 
+-- SELECT Genre from Books join loansOfMonth 
+SELECT DISTINCT Genre
+    FROM Books JOIN loansOfMonthCTE AS monthLoans 
     ON Books.BookID = monthLoans.BookID

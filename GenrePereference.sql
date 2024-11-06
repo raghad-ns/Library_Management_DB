@@ -15,13 +15,13 @@ WITH BooksLoansCountCTE AS
 )
 
 , BorrowedBooksCTE AS (
-	SELECT Books.BookID, Genere, Loans.BorrowerID 
+	SELECT Books.BookID, Genre, Loans.BorrowerID 
 		FROM Loans JOIN Books 
 		ON Loans.BookID = Books.BookID
 )
 
 , BooksBorrowersCTE AS (
-	SELECT BookID, Genere, Borrowers.BorrowerID, DateOfBirth 
+	SELECT BookID, Genre, Borrowers.BorrowerID, DateOfBirth 
 		FROM BorrowedBooksCTE JOIN Borrowers 
 		ON BorrowedBooksCTE.BorrowerID = Borrowers.BorrowerID
 )
@@ -31,10 +31,10 @@ WITH BooksLoansCountCTE AS
 )
 
 , GenreBorrowingFrequency AS (
-	SELECT Genere, AgeGroup, COUNT(Genere) OVER (PARTITION BY AgeGroup) AS Frequency 
+	SELECT Genre, AgeGroup, COUNT(Genre) OVER (PARTITION BY AgeGroup) AS Frequency 
 		FROM AgeGroupsCTE
 ) 
 
-SELECT distinct AgeGroup, Genere AS PreferedGenre, Frequency AS BorrwingFrequency, 
+SELECT distinct AgeGroup, Genre AS PreferedGenre, Frequency AS BorrwingFrequency, 
 	RANK() OVER (PARTITION BY AgeGroup order BY Frequency desc) AS GenreRank
 	FROM GenreBorrowingFrequency

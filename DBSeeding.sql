@@ -1,14 +1,16 @@
 USE LibraryManagement;
 
 -- Seed books table
-CREATE PROCEDURE p_seed_books
+CREATE PROCEDURE sp_seed_books
 AS
 BEGIN
 DECLARE @counter INT = 1;
+DECLARE @recordsNumber = 1000
+DECLARE @daysInAYear = 365
 
-WHILE @counter <= 1000
+WHILE @counter <= @recordsNumber
 BEGIN
-    INSERT INTO Books (Title, Author, ISBN, Genere, ShelfLocation, CurrentStatus)
+    INSERT INTO Books (Title, Author, ISBN, Genre, ShelfLocation, CurrentStatus)
     VALUES (
         CONCAT('Title ', @counter),
         CONCAT('Author ', @counter),
@@ -22,49 +24,49 @@ BEGIN
 END;
 END
 
-EXEC p_seed_books;
+EXEC sp_seed_books;
 GO
 
 -- Seed borrowers table
-CREATE PROCEDURE p_seed_borrowers
+CREATE PROCEDURE sp_seed_borrowers
 AS BEGIN
 DECLARE @counter INT = 1;
 
-WHILE @counter <= 1000
+WHILE @counter <= @recordsNumber
 BEGIN
     INSERT INTO Borrowers (FirstName, LastName, Email, DateOfBirth, MembershipDate)
     VALUES (
         CONCAT('FirstName', @counter),
         CONCAT('LastName', @counter),
         CONCAT('user', @counter, '@example.com'),
-        DATEADD(DAY, -(@counter * 30 % 365), '2000-01-01'),  -- Distributes dates of birth within a range
-        DATEADD(DAY, -(@counter * 30 % 365), '2024-01-01')
+        DATEADD(DAY, -(@counter * 30 % @daysInAYear), '2000-01-01'),  -- Distributes dates of birth within a range
+        DATEADD(DAY, -(@counter * 30 % @daysInAYear), '2024-01-01')
     );
 
     SET @counter = @counter + 1;
 END;
 END
 
-EXEC p_seed_borrowers
+EXEC sp_seed_borrowers
 GO
 
 -- Seed loans table
-CREATE PROCEDURE p_seed_loans
+CREATE PROCEDURE sp_seed_loans
 AS BEGIN 
 DECLARE @counter INT = 1;
 
-WHILE @counter <= 1000
+WHILE @counter <= @recordsNumber
 BEGIN
-    DECLARE @BookID INT = FLOOR(RAND() * 1000 + 1);       -- Random BookID between 1 and 1000
-    DECLARE @BorrowerID INT = FLOOR(RAND() * 1000 + 1);   -- Random BorrowerID between 1 and 1000
-    DECLARE @DateBorrowed DATE = DATEADD(DAY, -FLOOR(RAND() * 365), GETDATE());  -- Random date within the past year
+    DECLARE @BookID INT = FLOOR(RAND() * @recordsNumber + 1);       -- Random BookID between 1 and @recordsNumber
+    DECLARE @BorrowerID INT = FLOOR(RAND() * @recordsNumber + 1);   -- Random BorrowerID between 1 and @recordsNumber
+    DECLARE @DateBorrowed DATE = DATEADD(DAY, -FLOOR(RAND() * @daysInAYear), GETDATE());  -- Random date within the past year
     DECLARE @DueDate DATE = DATEADD(DAY, 14, @DateBorrowed);  -- 2 weeks after DateBorrowed
     DECLARE @DateReturned DATE = CASE 
                                    WHEN RAND() < 0.7 AND @counter < 900 THEN DATEADD(DAY, FLOOR(RAND() * 14), @DueDate) 
                                    ELSE NULL 
                                  END;  -- 70% chance of a return date within 2 weeks after DueDate
 
-    INSERT INTO Loans (BookID, BorrowerID, DateBorrowed, [DueDate], DateReturned)
+    INSERT INTO Loans (BookID, ID, DateBorrowed, [DueDate], DateReturned)
     VALUES (
         @BookID,
         @BorrowerID,
@@ -77,5 +79,5 @@ BEGIN
 END;
 END
 
-EXEC p_seed_loans
+EXEC sp_seed_loans
 GO

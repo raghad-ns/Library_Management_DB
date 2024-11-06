@@ -1,16 +1,10 @@
-
-WITH BooksLoansCountCTE AS 
+WITH AuthorsBooksPopularityCTE AS 
 (
-	SELECT DISTINCT BookID , COUNT(LoanID) OVER (PARTITION BY BookID) AS BookLoansCount 
-		FROM Loans
+	SELECT DISTINCT Author, COUNT(LoanID) AS AuthorBooksPopularity
+		FROM Books JOIN Loans 
+		ON Books.BookID = Loans.BookID
+		GROUP BY Author
 )
-
-, AuthorsBooksPopularityCTE AS 
-(
-	SELECT Author, SUM(BookLoansCount) over(PARTITION BY Author) AS AuthorBooksPopularity
-		FROM Books JOIN (SELECT * FROM BooksLoansCountCTE) AS BooksLoansCounts 
-		ON Books.BookID = BooksLoansCounts.BookID
-)
-
 
 SELECT *, DENSE_RANK() OVER (ORDER BY AuthorBooksPopularity DESC) AS AuthorRank FROM AuthorsBooksPopularityCTE
+
