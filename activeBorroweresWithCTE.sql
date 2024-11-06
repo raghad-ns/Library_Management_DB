@@ -1,7 +1,7 @@
 use LibraryManagement
 GO
 
-SELECT Borrowers.BorrowerID, FirstName, LastName, Email, DateOfBirth, MembershipDate 
+SELECT Borrowers.ID, FirstName, LastName, Email, DateOfBirth, MembershipDate 
 	FROM Borrowers 
 	JOIN (
 		SELECT BorrowerID,
@@ -12,4 +12,4 @@ SELECT Borrowers.BorrowerID, FirstName, LastName, Email, DateOfBirth, Membership
 		HAVING COUNT(BorrowerID) >= 2 and COUNT(DateReturned) = 0
 	) AS borrows 
 	ON 
-	Borrowers.BorrowerID = borrows.BorrowerID
+	Borrowers.ID = borrows.BorrowerID

@@ -3,7 +3,7 @@ RETURNS INT
 AS
 BEGIN
 	declare @frequency INT;
-	SELECT @frequency = COUNT(LoanID) FROM Loans WHERE BookID = @bookId ;
+	SELECT @frequency = COUNT(Loans.ID) FROM Loans WHERE BookID = @bookId ;
 
 	return @frequency;
 END

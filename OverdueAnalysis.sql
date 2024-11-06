@@ -21,22 +21,22 @@ DECLARE @overDueThreshold INT = 30;
 
 -- Get loans overDue
 WITH LoansOverDuesCTE AS (
-	SELECT Borrowers.BorrowerID, Books.BookID, LoanID, DueDate, DateReturned, dbo.fn_CalculateOverDueDays(LoanID, DueDate, DateReturned) AS overDue 
+	SELECT BorrowerID, BookID, Loans.ID, DueDate, DateReturned, dbo.fn_CalculateOverDueDays(Loans.ID, DueDate, DateReturned) AS overDue 
 	FROM Loans 
-	JOIN Borrowers ON Loans.BorrowerID = Borrowers.BorrowerID
-	JOIN Books ON Books.BookID = Loans.BookID
-	WHERE dbo.fn_CalculateOverDueDays(LoanID, DueDate, DateReturned) > @overDueThreshold
+	JOIN Borrowers ON Loans.BorrowerID = Borrowers.ID
+	JOIN Books ON Books.ID = Loans.BookID
+	WHERE dbo.fn_CalculateOverDueDays(Loans.ID, DueDate, DateReturned) > @overDueThreshold
 )
 
 , BorrowersoverDueCTE AS (
-	SELECT Borrowers.BorrowerID, FirstName, LAStName, BookID, overDue 
+	SELECT BorrowerID, FirstName, LAStName, BookID, overDue 
 		FROM Borrowers JOIN 
 		(SELECT BorrowerID, BookID, overDue FROM LoansoverDuesCTE ) AS LoansoverDues
-		on Borrowers.BorrowerID = LoansoverDues.BorrowerID
+		on Borrowers.ID = LoansoverDues.BorrowerID
 )
 
-SELECT BorrowerID, FirstName, LastName, Books.BookID, Title, Author, overDue
+SELECT BorrowerID, FirstName, LastName, BookID, Title, Author, overDue
 	FROM Books JOIN 
 	(SELECT * FROM BorrowersoverDueCTE) AS BorrowersoverDue
-	on Books.BookID = BorrowersoverDue.BookID
+	on Books.ID = BorrowersoverDue.BookID
 GO

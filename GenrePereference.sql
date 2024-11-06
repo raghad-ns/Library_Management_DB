@@ -10,20 +10,20 @@ END
 
 WITH BooksLoansCountCTE AS 
 (
-	SELECT  BookID , Count(LoanID) OVER (PARTITION BY BookID) AS BookLoansCount 
+	SELECT  BookID , Count(ID) OVER (PARTITION BY BookID) AS BookLoansCount 
 	FROM Loans
 )
 
 , BorrowedBooksCTE AS (
-	SELECT Books.BookID, Genre, Loans.BorrowerID 
+	SELECT BookID, Genre, Loans.BorrowerID 
 		FROM Loans JOIN Books 
-		ON Loans.BookID = Books.BookID
+		ON Loans.BookID = Books.ID
 )
 
 , BooksBorrowersCTE AS (
-	SELECT BookID, Genre, Borrowers.BorrowerID, DateOfBirth 
+	SELECT BookID, Genre, BorrowerID, DateOfBirth 
 		FROM BorrowedBooksCTE JOIN Borrowers 
-		ON BorrowedBooksCTE.BorrowerID = Borrowers.BorrowerID
+		ON BorrowedBooksCTE.BorrowerID = Borrowers.ID
 )
 
 , AgeGroupsCTE AS (

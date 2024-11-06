@@ -6,7 +6,7 @@ AS BEGIN
 
 	UPDATE Books
 		SET CurrentStatus = @NewStatus
-		WHERE BookID = @BookID;
+		WHERE ID = @BookID;
 END
 GO
 

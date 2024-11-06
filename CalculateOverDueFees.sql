@@ -1,9 +1,9 @@
-CREATE FUNCTION fn_CalculateOverdueFees (@LoanID INT)
+CREATE OR ALTER FUNCTION fn_CalculateOverdueFees (@LoanID INT)
 RETURNS INT AS
 BEGIN
 	DECLARE @fees INT
-	DECLARE @dueDate DATE = (SELECT DueDate FROM Loans WHERE LoanID = @LoanID)
-	DECLARE @returnedDate DATE = (SELECT DateReturned FROM Loans WHERE LoanID = @LoanID)
+	DECLARE @dueDate DATE = (SELECT DueDate FROM Loans WHERE ID = @LoanID)
+	DECLARE @returnedDate DATE = (SELECT DateReturned FROM Loans WHERE ID = @LoanID)
 	DECLARE @now DATE = SYSDATETIME()
 	DECLARE @daysThreshold INT = 30
 	IF (@returnedDate IS NULL) 
@@ -24,4 +24,4 @@ BEGIN
 END
 
 
-SELECT LoanID, dbo.fn_CalculateOverdueFees(1) AS OverDue FROM Loans
+SELECT ID, dbo.fn_CalculateOverdueFees(1) AS OverDue FROM Loans

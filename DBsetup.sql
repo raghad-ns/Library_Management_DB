@@ -12,29 +12,29 @@ CREATE TABLE [Borrowers] (
 );
 
 CREATE TABLE [Books] (
-  [BookID] INT IDENTITY PRIMARY KEY,
+  [ID] INT IDENTITY PRIMARY KEY,
   [Title] VARCHAR(50),
   [Author] VARCHAR(50),
   [ISBN] VARCHAR(13),
   [Genre] VARCHAR(20),
   [ShelfLocation] VARCHAR(30),
-  [CurrentStatus] VARCHAR(10) 
-  CHECK (CurrentStatus IN ('available', 'borrowed')),
+  [CurrentStatus] ENUM('AVAILABLE', 'BORROWED') 
+  --CHECK (CurrentStatus IN ('available', 'borrowed')),
 );
 
 CREATE TABLE [Loans] (
-  [LoanID] INT IDENTITY PRIMARY KEY,
+  [ID] INT IDENTITY PRIMARY KEY,
   [BookID] INT,
-  [ID] INT,
+  [BorrowerID] INT,
   [DateBorrowed] DATETIME DEFAULT SYSDATETIME(),
   [DueDate] DATETIME,
   [DateReturned] DATETIME,
   CONSTRAINT [FK_Borrowers.ID]
-    FOREIGN KEY ([ID])
+    FOREIGN KEY ([BorrowerID])
       REFERENCES [Borrowers]([ID]),
   CONSTRAINT [FK_Borrowers.BookID]
     FOREIGN KEY ([BookID])
-      REFERENCES [Books]([BookID])
+      REFERENCES [Books]([ID])
 );
 
 CREATE TABLE AuditLog (
@@ -42,7 +42,7 @@ CREATE TABLE AuditLog (
 	BookID INT, 
 	StatusChange VARCHAR(10),
 	ChangeDate DATE,
-	CHECK (StatusChange IN ('available', 'borrowed')),
+	CHECK (StatusChange IN ('AVAILABLE', 'BORROWED')),
 )
 
 

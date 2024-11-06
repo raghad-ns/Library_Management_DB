@@ -1,12 +1,11 @@
 USE LibraryManagement;
 
 -- Seed books table
-CREATE PROCEDURE sp_seed_books
+CREATE OR ALTER PROCEDURE sp_seed_books
 AS
 BEGIN
 DECLARE @counter INT = 1;
-DECLARE @recordsNumber = 1000
-DECLARE @daysInAYear = 365
+DECLARE @recordsNumber INT = 1000
 
 WHILE @counter <= @recordsNumber
 BEGIN
@@ -17,7 +16,7 @@ BEGIN
         RIGHT('0000000000000' + CAST(@counter AS VARCHAR(13)), 13),  -- Generates unique ISBNs
         CASE WHEN @counter % 4 = 0 THEN 'Fiction' ELSE 'Non-Fiction' END,
         CONCAT('Shelf-', @counter % 10),
-        CASE WHEN @counter % 2 = 0 THEN 'available' ELSE 'borrowed' END
+        CASE WHEN @counter % 2 = 0 THEN 'AVAILABLE' ELSE 'BORROWED' END
     );
 
     SET @counter = @counter + 1;
@@ -28,9 +27,12 @@ EXEC sp_seed_books;
 GO
 
 -- Seed borrowers table
-CREATE PROCEDURE sp_seed_borrowers
+CREATE OR ALTER PROCEDURE sp_seed_borrowers
 AS BEGIN
 DECLARE @counter INT = 1;
+DECLARE @recordsNumber INT = 1000
+DECLARE @daysInAYear INT = 365
+DECLARE @daysInAMonth INT = 30
 
 WHILE @counter <= @recordsNumber
 BEGIN
@@ -39,8 +41,8 @@ BEGIN
         CONCAT('FirstName', @counter),
         CONCAT('LastName', @counter),
         CONCAT('user', @counter, '@example.com'),
-        DATEADD(DAY, -(@counter * 30 % @daysInAYear), '2000-01-01'),  -- Distributes dates of birth within a range
-        DATEADD(DAY, -(@counter * 30 % @daysInAYear), '2024-01-01')
+        DATEADD(DAY, -(@counter * @daysInAMonth % @daysInAYear), '2000-01-01'),  -- Distributes dates of birth within a range
+        DATEADD(DAY, -(@counter * @daysInAMonth % @daysInAYear), '2024-01-01')
     );
 
     SET @counter = @counter + 1;
@@ -54,6 +56,8 @@ GO
 CREATE PROCEDURE sp_seed_loans
 AS BEGIN 
 DECLARE @counter INT = 1;
+DECLARE @recordsNumber INT = 1000
+DECLARE @daysInAYear INT = 365
 
 WHILE @counter <= @recordsNumber
 BEGIN

@@ -8,4 +8,4 @@ WITH loansOfMonthCTE AS (
 -- SELECT Genre from Books join loansOfMonth 
 SELECT DISTINCT Genre
     FROM Books JOIN loansOfMonthCTE AS monthLoans 
-    ON Books.BookID = monthLoans.BookID
+    ON Books.ID = monthLoans.BookID
